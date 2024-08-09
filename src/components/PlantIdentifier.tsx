@@ -2,8 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import PlantCareInfo from './PlantCareInfo';
-import { FaUpload, FaLeaf, FaTrash, FaInfoCircle, FaCamera, FaSeedling } from 'react-icons/fa';
+import { FaUpload, FaLeaf, FaTrash, FaInfoCircle, FaCamera, FaSeedling, FaSpinner } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({ 
+    weight: ['300', '400', '500', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+});
 
 interface PlantInfo {
     id: string;
@@ -101,14 +108,14 @@ export default function PlantIdentifier() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8"
+            className={`max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-10 ${roboto.className}`}
         >
-            <h1 className="text-3xl font-bold text-center mb-8 text-green-700">
+            <h1 className="text-4xl font-bold text-center mb-10 text-green-800">
                 <FaSeedling className="inline-block mr-3 text-green-600" />
                 Plant Sage
             </h1>
             <motion.div 
-                className={`mb-8 border-3 border-dashed rounded-xl p-6 ${dragActive ? 'border-green-400 bg-green-50' : 'border-gray-300'} transition-all duration-300`}
+                className={`mb-10 border-4 border-dashed rounded-2xl p-6 ${dragActive ? 'border-green-400 bg-green-50' : 'border-gray-300'} transition-all duration-300`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
@@ -116,8 +123,8 @@ export default function PlantIdentifier() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
             >
-                <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-40 cursor-pointer">
-                    <FaUpload className="w-10 h-10 text-green-500 mb-4" />
+                <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-32 cursor-pointer">
+                    <FaUpload className="w-12 h-12 text-green-500 mb-4" />
                     <span className="text-lg font-medium text-gray-700">
                         Drop files to attach, or <span className="text-green-600 underline">browse</span>
                     </span>
@@ -135,16 +142,13 @@ export default function PlantIdentifier() {
             <motion.button
                 onClick={identifyPlants}
                 disabled={plants.length === 0 || loading}
-                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition duration-300 disabled:opacity-50 text-lg font-semibold flex items-center justify-center shadow-md"
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-8 rounded-xl hover:from-green-700 hover:to-green-800 transition duration-300 disabled:opacity-50 text-xl font-semibold flex items-center justify-center shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
             >
                 {loading ? (
                     <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                        <FaSpinner className="animate-spin mr-3 h-6 w-6" />
                         Identifying Plants...
                     </>
                 ) : (
@@ -160,30 +164,30 @@ export default function PlantIdentifier() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6"
+                        className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8"
                     >
                         {plants.map((plant) => (
                             <motion.div 
                                 key={plant.id} 
-                                className="bg-gray-50 rounded-xl overflow-hidden shadow-md border border-gray-200"
+                                className="bg-gray-50 rounded-2xl overflow-hidden shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
                                 layout
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <img src={plant.preview} alt={`Plant`} className="w-full h-48 object-cover" />
-                                <div className="p-6">
+                                <img src={plant.preview} alt={`Plant`} className="w-full h-64 object-cover" />
+                                <div className="p-8">
                                     {plant.result ? (
                                         <>
-                                            <h2 className="text-xl font-semibold mb-3 text-green-700">Plant Information:</h2>
-                                            <div className="mb-4 text-gray-700 leading-relaxed">
+                                            <h2 className="text-2xl font-semibold mb-4 text-green-800">Plant Information:</h2>
+                                            <div className="mb-6 text-gray-700 leading-relaxed">
                                                 <p>{plant.result}</p>
                                             </div>
                                             <PlantCareInfo plantName={plant.result.split('\n')[0]} careInfo="Water regularly and place in bright, indirect sunlight." />
                                             <motion.button
                                                 onClick={() => removePlant(plant.id)}
-                                                className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300 text-sm font-medium flex items-center justify-center shadow-sm"
+                                                className="mt-6 bg-red-500 text-white py-3 px-6 rounded-xl hover:bg-red-600 transition duration-300 text-sm font-medium flex items-center justify-center shadow-md"
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                             >
@@ -192,7 +196,10 @@ export default function PlantIdentifier() {
                                             </motion.button>
                                         </>
                                     ) : (
-                                        <p className="text-gray-600 text-center py-6 text-lg">Awaiting identification...</p>
+                                        <div className="flex flex-col items-center justify-center py-10">
+                                            <FaLeaf className="text-4xl text-green-500 mb-4 animate-pulse" />
+                                            <p className="text-gray-600 text-center text-lg font-medium">Awaiting identification...</p>
+                                        </div>
                                     )}
                                 </div>
                             </motion.div>
